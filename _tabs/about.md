@@ -4,7 +4,6 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-<!-- > Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page. -->
-<!-- {: .prompt-tip } -->
+Started learning cybersecurity and doing CTFs in July 2024 and somehow ended up becoming **ONE OF THEM?!**
 
-> Started to learn cybersecurity and do CTF since July 2024 and ended up becoming ONE OF THEM?!, also just an ordinary 21-year-old guy who loves playing games and doing binary exploitation, little does he know whether he's cooking or being cooked.
+Also just an ordinary 21-year-old guy who enjoys games and binary exploitation — still figuring out whether I’m cooking… or getting cooked
