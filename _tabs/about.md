@@ -4,5 +4,4 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-Started learning cybersecurity and doing CTFs in July 2024 and somehow ended up becoming **ONE OF THEM?!**.
-Also just an ordinary 21-year-old guy who enjoys games and binary exploitation — still figuring out whether I’m cooking… or getting cooked
+My name is Phin Sophea, I am 21 years old, and I am a senior student majoring in a Bachelor of Science in Cybersecurity at the American University of Phnom Penh. I have been interested in cybersecurity since high school, and I have been learning technical skills and participating in CTFs (capture the flags) since July 2024. Binary exploitation and web exploitation are my favorite things in the cybersecurity field.
