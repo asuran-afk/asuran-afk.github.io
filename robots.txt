@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://asuran-afk.github.io/sitemap.xml
