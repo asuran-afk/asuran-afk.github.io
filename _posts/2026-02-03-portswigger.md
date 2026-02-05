@@ -14,9 +14,15 @@ description: "Note for Web Security Labs"
 To do further injection, the first thing we should check is the number of columns. We can use this query `' ORDER BY {number}`, and if we see the server is crashed, for example, when injecting `' ORDER BY 3`, it means that the database has 2 columns. 
 
 ### Labs
-```shell
-# can be used to retrive hidden data and bypass authentication
-' OR 1 = 1 -- -
-# querying the database type and version on Oracle
-' UNION SELECT NULL, banner FROM v$version -- -
+```sql
+-- Used to retrieve hidden data and bypass authentication
+OR 1=1 -- -
+
+-- Querying the database type and version on Oracle
+UNION SELECT NULL, banner FROM v$version -- -
 ```
+
+## Cross-site Scripting
+### Cheat Sheet
+### Notes
+### Labs
