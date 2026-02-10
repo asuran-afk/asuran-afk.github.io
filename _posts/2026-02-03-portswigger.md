@@ -61,6 +61,7 @@ AND (SELECT CASE WHEN (SUBSTRING(password,1,1)='1') THEN pg_sleep(10) ELSE NULL 
 
 - Solver for Blind SQL injection with conditional responses can be found [here](/assets/solutions/portswigger/conditional_responses.py).
 - Solver for Blind SQL injection with conditional errors can be found [here](/assets/solutions/portswigger/conditional_errors.py).
+- Solver for Blind SQL injection with time delays and information retrieval can be found [here](/assets/solutions/portswigger/time_delays.py).
 
 ## Cross-site Scripting (XSS)
 ### Cheat Sheet
