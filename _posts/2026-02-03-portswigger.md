@@ -352,6 +352,9 @@ Lab is not available at the moment (17/04/2026)
 - Coming Soon
 
 ## Cross-origin resource sharing (CORS)
+## Cheat Sheet 
+- Cheat Sheet can be found [here](https://portswigger.net/web-security/ssrf/url-validation-bypass-cheat-sheet).
+
 ### Notes
 ### Labs
 {% raw %}
