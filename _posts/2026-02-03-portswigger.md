@@ -15,6 +15,7 @@ To do further injection, the first thing we should check is the number of column
 
 ### Labs
 - Useful resources from AI can be found [here](https://chatgpt.com/share/6984ac5e-6544-800d-84c1-02420cc47e47).
+
 ```sql
 -- used to retrieve hidden data and bypass authentication
 OR 1=1 -- -
@@ -72,6 +73,7 @@ UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTY
 ## Cross-site Scripting (XSS)
 ### Cheat Sheet
 - Cheat Sheet can be found [here](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet).
+
 ### Notes
 ### Labs
 {% raw %}
@@ -348,6 +350,7 @@ Lab is not available at the moment (17/04/2026)
 ### Notes
 ### Labs
 - Coming Soon
+
 ## Cross-origin resource sharing (CORS)
 ### Notes
 ### Labs
