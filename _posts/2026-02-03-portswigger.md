@@ -525,4 +525,10 @@ ${ ex("rm morale.txt") }
 ../../../../etc/passwd%00.jpg
 ```
 
+## Access control vulnerabilities
+### Notes
+### Labs
+```sh
+# Unprotected admin functionality
 
+```
