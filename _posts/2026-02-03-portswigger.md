@@ -761,20 +761,25 @@ location = "https://0ab500520374d00f8091a8f4009800c0.web-security-academy.net/?_
 ## GraphQL API vulnerabilities
 ### Notes
 - Common endpoint names:
-/graphql
-/api
-/api/graphql
-/graphql/api
-/graphql/graphql
+
+`/graphql`
+`/api`
+`/api/graphql`
+`/graphql/api`
+`/graphql/graphql`
+
 If these common endpoints don't return a GraphQL response, you could also try appending /v1 to the path.
 
 - Universal queries
+
 If you send `query{__typename}` to any GraphQL endpoint, it will include the string `{"data": {"__typename": "query"}}` somewhere in its response. This is known as a universal query, and is a useful tool in probing whether a URL corresponds to a GraphQL service
 
 - Probing for introspection
+
 `{"query": "{__schema{queryType{name}}}"}`
 
 - Running a full introspection query
+
 ```
 query IntrospectionQuery {
     __schema {
@@ -862,9 +867,13 @@ fragment TypeRef on __Type {
     }
 }
 ```
+
 `If introspection is enabled but the above query doesn't run, try removing the onOperation, onFragment, and onField directives from the query structure. Many endpoints do not accept these directives as part of an introspection query, and you can often have more success with introspection by removing them.`
+
 - Bypassing GraphQL introspection defenses
+
 `query%7B__schema%0A%7BqueryType%7Bname%7D%7D%7D`
+
 ### Labs
 
 {% raw %}
@@ -967,6 +976,7 @@ def handleResponse(req, interesting):
 - Null character: `Gifts'%00`
 
 - Submitting query operators
+
 In JSON messages, you can insert query operators as nested objects. For example, {"username":"wiener"} becomes {"username":{"$ne":"invalid"}}.
 
 For URL-based inputs, you can insert query operators via URL parameters. For example, username=wiener becomes username[$ne]=invalid. If this doesn't work, you can try the following:
@@ -976,6 +986,7 @@ For URL-based inputs, you can insert query operators via URL parameters. For exa
 4. Inject query operators in the JSON.
 
 - Detecting operator injection in MongoDB
+
 Consider a vulnerable application that accepts a username and password in the body of a POST request:
 
 `{"username":"wiener","password":"peter"}`
@@ -994,6 +1005,7 @@ To target an account, you can construct a payload that includes a known username
 `{"username":{"$in":["admin","administrator","superadmin"]},"password":{"$ne":""}}`
 
 - Exfiltrating data in MongoDB
+
 Consider a vulnerable application that allows users to look up other registered usernames and displays their role. This triggers a request to the URL:
 
 `https://insecure-website.com/user/lookup?username=admin`
