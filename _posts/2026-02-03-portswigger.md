@@ -1319,8 +1319,8 @@ first, deliver '<script>document.location="https://0a4f00a40341821c800dbc9100930
 ```
 {% endraw %}
 
-## Mystery challenge (Cross-site Scripting)
-### Challenge 1
+## Mystery challenge
+### Challenge 1 (Cross-site Scripting)
 - Objective: Perform an XSS attack that causes Burp's browser (or Chrome) to call the alert() function.
 
 {% raw %}
